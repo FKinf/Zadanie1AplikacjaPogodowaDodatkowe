@@ -4,6 +4,7 @@ import datetime
 import requests
 from flask import Flask, render_template, request
 
+# Konfiguracja logowania
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
@@ -12,17 +13,20 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
+# Dane autora i konfiguracja
 AUTHOR = "Filip Kwietniak"
 PORT = int(os.environ.get("PORT", 8080))
 API_KEY = os.environ.get("WEATHER_API_KEY", "")
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
+# Lista krajów i miast
 LOCATIONS = {
     "Polska": ["Warszawa", "Kraków", "Gdańsk", "Wrocław", "Poznań", "Lublin"],
     "Wielka Brytania": ["London", "Manchester", "Birmingham", "Edinburgh", "Bristol"],
     "USA": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"],
 }
 
+# Log uruchomienia — wymagany przez zadanie 
 logger.info(f"=== Aplikacja uruchomiona ===")
 logger.info(f"Data uruchomienia : {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 logger.info(f"Autor             : {AUTHOR}")
