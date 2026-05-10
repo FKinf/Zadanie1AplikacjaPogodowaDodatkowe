@@ -1,14 +1,16 @@
-# Zadanie 1 — Technologie Chmurowe
+# Zadanie 1 NieObowiązkowe— Technologie Chmurowe
 
 **Autor:** Filip Kwietniak 
+
 **Repozytorium GitHub:** https://github.com/FKinf/Zadanie1AplikacjaPogodowaDodatkowe
+
 **Obraz DockerHub:** https://hub.docker.com/repository/docker/fkinf/weather-app/general
 ---
 
 
 Wybrany poziom trudności do 3
 
-Utworzenie nowego buildera na sterowniku docker-container:
+**Utworzenie nowego buildera na sterowniku docker-container:**
 
 docker buildx create --name zadaniedodbuilder --driver docker-container --driver-opt network=host --bootstrap
 wynik: 
@@ -20,7 +22,7 @@ wynik:
 zadaniedodbuilder
 
 
-Sprawdzenie czy builder obsługuje obie wymagane platformy:
+**Sprawdzenie czy builder obsługuje obie wymagane platformy:**
 
 docker buildx use zadaniedodbuilder
 docker buildx inspect --bootstrap
@@ -39,16 +41,16 @@ BuildKit version:      v0.29.0
 Platforms:             linux/amd64, linux/amd64/v2, linux/amd64/v3, linux/arm64, linux/riscv64, linux/ppc64le, linux/s390x, linux/386, linux/mips64le, linux/mips64, linux/loong64, linux/arm/v7, linux/arm/v6
 
 
-Plik dockerfile.multiarch wykorzystujący frontend BuildKit umożliwiający klonowanie kodu został umieszony w repozytorium.
+**Plik dockerfile.multiarch wykorzystujący frontend BuildKit umożliwiający klonowanie kodu został umieszony w repozytorium.**
 
 
-Przygotwanie klucza SSH
+**Przygotwanie klucza SSH**
 
 Identity added: /home/filip/.ssh/gh_cli_tchlab6_ed25519 (email)
 256 SHA256:xQvgyTtKOHokWle0xo************ <email> (ED25519)
 
 
-Budowanie obrazu z wykorzystaniem eksportera registry oraz backend-u registry w trybie max
+**Budowanie obrazu z wykorzystaniem eksportera registry oraz backend-u registry w trybie max**
 
 docker buildx build --builder zadaniedodbuilder --platform linux/amd64,linux/arm64 --ssh default --cache-to type=registry,ref=fkinf/weather-app:cache,mode=max --cache-from type=registry,ref=fkinf/weather-app:cache --tag fkinf/weather-app:latest --push -f Dockerfile.multiarch .
 wynik:
@@ -142,7 +144,7 @@ wynik:
 
 
 
-Weryfikacja działania cache
+**Weryfikacja działania cache**
 
 docker buildx build --builder zadaniedodbuilder --platform linux/amd64,linux/arm64 --ssh default --cache-to type=registry,ref=fkinf/weather-app:cache,mode=max --cache-from type=registry,ref=fkinf/weather-app:cache --tag fkinf/weather-app:latest --push -f Dockerfile.multiarch .
 wynik:
@@ -191,7 +193,7 @@ wynik:
  => exporting to image                                                                                                                       6.3s
 
 
-Weryfikacja manifestu
+**Weryfikacja manifestu**
 
 docker buildx imagetools inspect fkinf/weather-app:latest
 wynik:
@@ -211,7 +213,7 @@ Manifests:
                
 
 
-Weryfikacja obrazu cache na registry
+**Weryfikacja obrazu cache na registry**
 
 docker buildx imagetools inspect fkinf/weather-app:cache
 wynik:
@@ -220,9 +222,10 @@ Name:      docker.io/fkinf/weather-app:cache
 MediaType: application/vnd.oci.image.manifest.v1+json
 Digest:    sha256:30ea70ef66b36d7631eb****************************
 
-Skanowanie podatności CVE(trivy)
+**Skanowanie podatności CVE(trivy)**
 
 trivy image fkinf/weather-app:latest
+
 wynik:
 
 fkinf/weather-app:latest (debian 13.4)
