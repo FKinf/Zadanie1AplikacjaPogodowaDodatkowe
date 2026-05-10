@@ -1,23 +1,34 @@
 # syntax=docker/dockerfile:1.7
 
+# Autor: Filip Kwietniak
+# Dockerfile dla części nieobowiązkowej — Wersja 3
+
+
+# Klonujemy kod źródłowy z GitHub przez SSH (--mount=ssh)
+# Klucz SSH jest dostępny tylko podczas tego kroku RUN — nie trafia do finalnego obrazu aby zapenić bezpieczeństwo
 FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
+# Instalujemy git potrzebny do klonowania repozytorium
 RUN apt-get update && apt-get install -y --no-install-recommends git openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
+# Dodajemy github.com do known_hosts żeby uniknąć interaktywnego pytania
 RUN mkdir -p /root/.ssh && \
     ssh-keyscan github.com >> /root/.ssh/known_hosts
 
+# Klonujemy kod z GitHub używając klucza SSH przekazanego przez --mount=ssh
 RUN --mount=type=ssh \
     git clone git@github.com:FKinf/Zadanie1AplikacjaPogodowaDodatkowe.git .
 
+# Instalujemy zależności z cache w trybie max
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --no-cache-dir --prefix=/install -r app/requirements.txt
 
 FROM python:3.12-slim AS final
 
+# OCI Labels zgodne ze standardem
 LABEL org.opencontainers.image.authors="Filip Kwietniak"
 LABEL org.opencontainers.image.title="Weather App"
 LABEL org.opencontainers.image.description="Aplikacja pogodowa Flask — Technologie Chmurowe Lab 1"
@@ -31,8 +42,10 @@ RUN adduser --disabled-password --gecos "" appuser
 
 WORKDIR /app
 
+# Kopiujemy zainstalowane zależności z etapu builder
 COPY --from=builder /install /usr/local
 
+# Kopiujemy kod aplikacji z etapu builder
 COPY --from=builder /app/app/ .
 COPY --from=builder /app/app/templates/ ./templates/
 
